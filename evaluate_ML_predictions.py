@@ -109,14 +109,16 @@ data_df['Decay 3FP'] = data['y'][0,:,5].T
 data_df['Decay 10FP'] = data['y'][0,:,6].T
 data_df['Decay 160FP'] = data['y'][0,:,7].T
 
-data_df['predict_dF/F0 1FP'] = data['yhat_mean'][0,:,0].T
-data_df['predict_dF/F0 3FP'] = data['yhat_mean'][0,:,1].T
-data_df['predict_dF/F0 10FP'] = data['yhat_mean'][0,:,2].T
-data_df['predict_dF/F0 160FP'] = data['yhat_mean'][0,:,3].T
-data_df['predict_Decay 1FP'] = data['yhat_mean'][0,:,4].T
-data_df['predict_Decay 3FP'] = data['yhat_mean'][0,:,5].T
-data_df['predict_Decay 10FP'] = data['yhat_mean'][0,:,6].T
-data_df['predict_Decay 160FP'] = data['yhat_mean'][0,:,7].T
+df_save_path = r'D:\pythonTesting\ML-validation-data\data_df_predict=mean+std.pkl'
+
+data_df['predict_dF/F0 1FP'] = data['yhat_mean'][0,:,0].T + data['yhat_disper'][0,:,0].T/2
+data_df['predict_dF/F0 3FP'] = data['yhat_mean'][0,:,1].T + data['yhat_disper'][0,:,1].T/2
+data_df['predict_dF/F0 10FP'] = data['yhat_mean'][0,:,2].T + data['yhat_disper'][0,:,2].T/2
+data_df['predict_dF/F0 160FP'] = data['yhat_mean'][0,:,3].T + data['yhat_disper'][0,:,3].T/2
+data_df['predict_Decay 1FP'] = data['yhat_mean'][0,:,4].T + data['yhat_disper'][0,:,4].T/2
+data_df['predict_Decay 3FP'] = data['yhat_mean'][0,:,5].T + data['yhat_disper'][0,:,5].T/2
+data_df['predict_Decay 10FP'] = data['yhat_mean'][0,:,6].T + data['yhat_disper'][0,:,6].T/2
+data_df['predict_Decay 160FP'] = data['yhat_mean'][0,:,7].T + data['yhat_disper'][0,:,7].T/2
 
 data_df['naive_dF/F0 1FP'] = data_naive['yhat_mean'][0,:,0].T
 data_df['naive_dF/F0 3FP'] = data_naive['yhat_mean'][0,:,1].T
@@ -147,9 +149,9 @@ for var_to_predict in all_vars_to_predict:
     	mean_ML[i], std_ML[i], mean_naive[i], std_naive[i], mean_random[i], std_random[i] = [f for f in performance_given_budget(data_df, var_to_predict, b, num_gt_data_to_predict, nTimesToRun)]
     
     ax = plt.subplot(2,4,s)
-    plt.plot(budget, mean_ML, 'b-')
-    plt.plot(budget, mean_naive, color=[0, .5, 0])
-    plt.plot(budget, mean_random, color=[.5, 0, 0])
+    plt.plot(budget, mean_ML, 'b-') # ML: blue
+    plt.plot(budget, mean_naive, color=[0, .5, 0]) # naive: green
+    plt.plot(budget, mean_random, color=[.5, 0, 0]) # random: red
     plt.fill_between(budget, mean_random-std_random, mean_random+std_random, color=[.5, 0, 0], alpha=0.6)
     ax.tick_params(axis='both', which='major', labelsize=8)
     plt.show()
@@ -160,4 +162,4 @@ for var_to_predict in all_vars_to_predict:
         plt.xlabel('test budget', fontsize=8)
     s+=1
 
-data_df.to_pickle(r'D:\pythonTesting\ML-validation-data\data_df.pkl')
+data_df.to_pickle(df_save_path)
