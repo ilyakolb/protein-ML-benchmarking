@@ -81,10 +81,10 @@ nTimesToRun = 10
 all_vars_to_predict = ['dF/F0 1FP', 'dF/F0 3FP', 'dF/F0 10FP', 'dF/F0 160FP', 'Decay 1FP', 'Decay 3FP', 'Decay 10FP', 'Decay 160FP']
 
 # convolutional unirep
-# data = np.load(r"Z:\BenArthur/machine-learning/20200915/convunirep2-lr4-ks17-fm8-nl1-bs32-3p6-xv8/convunirep2-lr4-ks17-fm8-nl1-bs32-3p6-xv8-predict/predictions-pearson-allfolds.npz")
+data = np.load(r"Z:\BenArthur/machine-learning/20200915/convunirep2-lr4-ks17-fm8-nl1-bs32-3p6-xv8/convunirep2-lr4-ks17-fm8-nl1-bs32-3p6-xv8-predict/predictions-pearson-allfolds.npz")
 
 # convolutional aaseq
-data = np.load(r"Z:\BenArthur/machine-learning/20200915/convprobaaseq-lr4-ks17-fm64-nl1-bs32-3p6-xv8/predict6/predictions-pearson-allfolds.npz")
+# data = np.load(r"Z:\BenArthur/machine-learning/20200915/convprobaaseq-lr4-ks17-fm64-nl1-bs32-3p6-xv8/predict6/predictions-pearson-allfolds.npz")
 
 # naive
 data_naive = np.load(r"Z:\BenArthur/machine-learning/20200919/denseaaseq-lr4-nl1-bs32-3p6-xv8/predict6/predictions-pearson-allfolds.npz")
@@ -127,7 +127,7 @@ data_df['naive_Decay 3FP'] = data_naive['yhat_mean'][0,:,5].T
 data_df['naive_Decay 10FP'] = data_naive['yhat_mean'][0,:,6].T
 data_df['naive_Decay 160FP'] = data_naive['yhat_mean'][0,:,7].T
 
-# remove overlapping constructs
+# remove overlapping constructs (CHECK TO MAKE SURE RIGHT VARIANTS EXCLUDED)
 not_overlapping = np.logical_not(data['b_train'][0,:,0])
 data_df = data_df[not_overlapping]
 
@@ -159,3 +159,5 @@ for var_to_predict in all_vars_to_predict:
     if s >= 5 and s <= 8:
         plt.xlabel('test budget', fontsize=8)
     s+=1
+
+data_df.to_pickle(r'D:\pythonTesting\ML-validation-data\data_df.pkl')
