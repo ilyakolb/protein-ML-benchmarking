@@ -51,17 +51,18 @@ def performance_given_budget(data, var_predict, b, top_N_to_predict, nTimes):
         reverse_sort = 'Decay' in var_predict # reverse sort (descending) if df/f. otherwise, regular sort
         gt_ranked_variants = data.sort_values(by=var_predict, ascending=reverse_sort)['variant'].values
         predict_ranked_variants= data.sort_values(by='predict_' + var_predict, ascending=reverse_sort)['variant'].values
+        naive_ranked_variants= data.sort_values(by='naive_' + var_predict, ascending=reverse_sort)['variant'].values
         
         top_randsample_variants = data.sample(frac=1)['variant'][:b]
         
         # strategy for choosing top hits
         top_predict_ranked_variants = predict_ranked_variants[:b]
-        
+        top_naive_ranked_variants = naive_ranked_variants[:b]
         # machine learning model
         s = fraction_top_score(top_predict_ranked_variants, gt_ranked_variants, top_N_to_predict)
 		
         # naive machine learning model (FOR NOW, = RANDOM MODEL)
-        s_naive = fraction_top_score(top_randsample_variants, gt_ranked_variants, top_N_to_predict)
+        s_naive = fraction_top_score(top_naive_ranked_variants, gt_ranked_variants, top_N_to_predict)
 		
         # random model
         s_random = fraction_top_score(top_randsample_variants, gt_ranked_variants, top_N_to_predict)
@@ -75,13 +76,18 @@ def performance_given_budget(data, var_predict, b, top_N_to_predict, nTimes):
 
 
 num_gt_data_to_predict = 20 # predicting this many of the top ground truths
-budget = np.arange(20,655,20) # test budget
 nTimesToRun = 10
 
 all_vars_to_predict = ['dF/F0 1FP', 'dF/F0 3FP', 'dF/F0 10FP', 'dF/F0 160FP', 'Decay 1FP', 'Decay 3FP', 'Decay 10FP', 'Decay 160FP']
 
-# load model npz
-data = np.load(r"Z:\BenArthur/machine-learning/20200915/convunirep2-lr4-ks17-fm8-nl1-bs32-3p6-xv8/convunirep2-lr4-ks17-fm8-nl1-bs32-3p6-xv8-predict/predictions-pearson-allfolds.npz")
+# convolutional unirep
+# data = np.load(r"Z:\BenArthur/machine-learning/20200915/convunirep2-lr4-ks17-fm8-nl1-bs32-3p6-xv8/convunirep2-lr4-ks17-fm8-nl1-bs32-3p6-xv8-predict/predictions-pearson-allfolds.npz")
+
+# convolutional aaseq
+data = np.load(r"Z:\BenArthur/machine-learning/20200915/convprobaaseq-lr4-ks17-fm64-nl1-bs32-3p6-xv8/predict6/predictions-pearson-allfolds.npz")
+
+# naive
+data_naive = np.load(r"Z:\BenArthur/machine-learning/20200919/denseaaseq-lr4-nl1-bs32-3p6-xv8/predict6/predictions-pearson-allfolds.npz")
 
 # load corresponding variant names
 filedir_root = r'Z:\BenArthur\machine-learning\gcamp-variants-with-mask'
@@ -89,9 +95,6 @@ filedir_varnames = os.path.join(filedir_root, data['data_file'][0])
 data_variant = np.load(filedir_varnames)
 data_df = pd.DataFrame()
 data_df['variant'] = data_variant['variant']
-# data_df = pd.read_csv(r"D:\pythonTesting\screening_spreadsheets\vinay_prediction_data/ground-truth-with-variant-names.csv")
-
-# f1 = {'data_file': data['data_file'][0], 'b_train': data['b_train'], 'y': data['y'], 'yhat_mean': data['yhat_mean'], 'yhat_stddev': data['yhat_stddev']}
 
 plt.close('all')
 plt.figure(figsize=[8,4])
@@ -115,6 +118,21 @@ data_df['predict_Decay 3FP'] = data['yhat_mean'][0,:,5].T
 data_df['predict_Decay 10FP'] = data['yhat_mean'][0,:,6].T
 data_df['predict_Decay 160FP'] = data['yhat_mean'][0,:,7].T
 
+data_df['naive_dF/F0 1FP'] = data_naive['yhat_mean'][0,:,0].T
+data_df['naive_dF/F0 3FP'] = data_naive['yhat_mean'][0,:,1].T
+data_df['naive_dF/F0 10FP'] = data_naive['yhat_mean'][0,:,2].T
+data_df['naive_dF/F0 160FP'] = data_naive['yhat_mean'][0,:,3].T
+data_df['naive_Decay 1FP'] = data_naive['yhat_mean'][0,:,4].T
+data_df['naive_Decay 3FP'] = data_naive['yhat_mean'][0,:,5].T
+data_df['naive_Decay 10FP'] = data_naive['yhat_mean'][0,:,6].T
+data_df['naive_Decay 160FP'] = data_naive['yhat_mean'][0,:,7].T
+
+# remove overlapping constructs
+not_overlapping = np.logical_not(data['b_train'][0,:,0])
+data_df = data_df[not_overlapping]
+
+budget = np.arange(20,len(data_df),20) # test budget
+
 s=1 # subplot index
 
 for var_to_predict in all_vars_to_predict:
@@ -130,7 +148,7 @@ for var_to_predict in all_vars_to_predict:
     
     ax = plt.subplot(2,4,s)
     plt.plot(budget, mean_ML, 'b-')
-    # plt.fill_between(budget, mean_ML-std_ML, mean_ML+std_ML, color=[.5, 0, 0], alpha=0.6)
+    plt.plot(budget, mean_naive, color=[0, .5, 0])
     plt.plot(budget, mean_random, color=[.5, 0, 0])
     plt.fill_between(budget, mean_random-std_random, mean_random+std_random, color=[.5, 0, 0], alpha=0.6)
     ax.tick_params(axis='both', which='major', labelsize=8)
