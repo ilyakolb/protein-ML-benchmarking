@@ -18,8 +18,8 @@ def fraction_top_score(top_pred, gt_variants, n_to_predict):
 	"""
 	evaluate what fraction of top true variants are correctly predicted by model
 	@inputs:
-		pred_variants (int array): ranked (ascending) variant names predicted top variants
-		gt_variants (int array): ranked (ascending) variant names ground truth variants
+		top_pred (int array): ranked (best to worst) variant names predicted top variants
+		gt_variants (int array): ranked (best to worst) variant names ground truth variants
 		n_to_predict (int): number of top constructs in ground truth data to predict
 	@ output:
 		fraction (float): fraction of top constructs in trueVals that are also in the top of predVals
