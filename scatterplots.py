@@ -5,7 +5,6 @@ Created on Tue May 12 17:47:40 2020
 @author: kolbi
 """
 
-# test hallucinator
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -15,10 +14,15 @@ import seaborn as sns
 plt.figure(figsize = [5,5])
 highlights = np.array([1473, 1513, 1561])
 highlights_txt = np.array(['7s', '7c', '7b'])
-df = pd.read_pickle(r'D:\pythonTesting\ML-validation-data\data_df.pkl')
 
-x_to_plot_gt = "dF/F0 1FP"
-y_to_plot_gt = "Decay 1FP"
+model = 'convprobaaseq' # convunirep or convprobaaseq
+predict_type = 'mean+std'
+df_save_path = r'D:\pythonTesting\ML-validation-data\data_df_predict=' +predict_type+ '_model=' + model + '.pkl'
+
+df = pd.read_pickle(df_save_path)
+
+x_to_plot_gt = "dF/F0 160FP"
+y_to_plot_gt = "Decay 160FP"
 x_to_plot_ML = 'predict_' + x_to_plot_gt
 y_to_plot_ML = 'predict_' + y_to_plot_gt
 
@@ -64,7 +68,7 @@ plt.ylabel(y_to_plot_gt)
 
 plt.tight_layout()
 
-# multi-dimensional comparison
+# box plots of rank differences (ML vs naive)
 
 plt.figure()
 # df_multidim = pd.DataFrame()
@@ -74,3 +78,4 @@ df_comp = df_ranked.melt(value_vars=['ML vs GT', 'naive vs GT'], var_name = 'mod
 ax = sns.swarmplot(x='model',  y='rank difference', data=df_comp, color=".25", alpha=0.5)
 ax = sns.boxplot(x='model',  y='rank difference', data=df_comp)
 ax.set_title(x_to_plot_gt + " and " + y_to_plot_gt)
+ax.tight_layout()

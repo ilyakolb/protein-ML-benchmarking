@@ -61,7 +61,7 @@ def performance_given_budget(data, var_predict, b, top_N_to_predict, nTimes):
         # machine learning model
         s = fraction_top_score(top_predict_ranked_variants, gt_ranked_variants, top_N_to_predict)
 		
-        # naive machine learning model (FOR NOW, = RANDOM MODEL)
+        # naive machine learning model
         s_naive = fraction_top_score(top_naive_ranked_variants, gt_ranked_variants, top_N_to_predict)
 		
         # random model
@@ -80,7 +80,7 @@ nTimesToRun = 10
 
 all_vars_to_predict = ['dF/F0 1FP', 'dF/F0 3FP', 'dF/F0 10FP', 'dF/F0 160FP', 'Decay 1FP', 'Decay 3FP', 'Decay 10FP', 'Decay 160FP']
 
-model = 'convprobaaseq'
+model = 'convunirep' # convunirep or convprobaaseq
 
 if model == 'convunirep':
     # convolutional unirep
@@ -112,16 +112,16 @@ data_df['Decay 3FP'] = data['y'][0,:,5].T
 data_df['Decay 10FP'] = data['y'][0,:,6].T
 data_df['Decay 160FP'] = data['y'][0,:,7].T
 
-df_save_path = r'D:\pythonTesting\ML-validation-data\data_df_predict=mean_model=' + model + '.pkl'
+df_save_path = r'D:\pythonTesting\ML-validation-data\data_df_predict=mean+std_model=' + model + '.pkl'
 
-data_df['predict_dF/F0 1FP'] = data['yhat_mean'][0,:,0].T #+ data['yhat_disper'][0,:,0].T/2
-data_df['predict_dF/F0 3FP'] = data['yhat_mean'][0,:,1].T #+ data['yhat_disper'][0,:,1].T/2
-data_df['predict_dF/F0 10FP'] = data['yhat_mean'][0,:,2].T #+ data['yhat_disper'][0,:,2].T/2
-data_df['predict_dF/F0 160FP'] = data['yhat_mean'][0,:,3].T #+ data['yhat_disper'][0,:,3].T/2
-data_df['predict_Decay 1FP'] = data['yhat_mean'][0,:,4].T #+ data['yhat_disper'][0,:,4].T/2
-data_df['predict_Decay 3FP'] = data['yhat_mean'][0,:,5].T #+ data['yhat_disper'][0,:,5].T/2
-data_df['predict_Decay 10FP'] = data['yhat_mean'][0,:,6].T #+ data['yhat_disper'][0,:,6].T/2
-data_df['predict_Decay 160FP'] = data['yhat_mean'][0,:,7].T #+ data['yhat_disper'][0,:,7].T/2
+data_df['predict_dF/F0 1FP'] = data['yhat_mean'][0,:,0].T + data['yhat_disper'][0,:,0].T/2
+data_df['predict_dF/F0 3FP'] = data['yhat_mean'][0,:,1].T + data['yhat_disper'][0,:,1].T/2
+data_df['predict_dF/F0 10FP'] = data['yhat_mean'][0,:,2].T + data['yhat_disper'][0,:,2].T/2
+data_df['predict_dF/F0 160FP'] = data['yhat_mean'][0,:,3].T + data['yhat_disper'][0,:,3].T/2
+data_df['predict_Decay 1FP'] = data['yhat_mean'][0,:,4].T + data['yhat_disper'][0,:,4].T/2
+data_df['predict_Decay 3FP'] = data['yhat_mean'][0,:,5].T + data['yhat_disper'][0,:,5].T/2
+data_df['predict_Decay 10FP'] = data['yhat_mean'][0,:,6].T + data['yhat_disper'][0,:,6].T/2
+data_df['predict_Decay 160FP'] = data['yhat_mean'][0,:,7].T + data['yhat_disper'][0,:,7].T/2
 
 data_df['naive_dF/F0 1FP'] = data_naive['yhat_mean'][0,:,0].T
 data_df['naive_dF/F0 3FP'] = data_naive['yhat_mean'][0,:,1].T
