@@ -74,7 +74,9 @@ def performance_given_budget(data, var_predict, b, top_N_to_predict, nTimes):
 	# print(len(avgScores))
     return (np.mean(scores_ML), np.std(scores_ML), np.mean(scores_naive), np.std(scores_naive), np.mean(scores_random), np.std(scores_random))
 
-
+#############
+save_on = 0 # 1 to save data_df pickle
+remove_common_positions = 1 # 1 to remove constructs with common positions between 3 and 6
 num_gt_data_to_predict = 20 # predicting this many of the top ground truths
 nTimesToRun = 10
 
@@ -132,10 +134,13 @@ data_df['naive_Decay 3FP'] = data_naive['yhat_mean'][0,:,5].T
 data_df['naive_Decay 10FP'] = data_naive['yhat_mean'][0,:,6].T
 data_df['naive_Decay 160FP'] = data_naive['yhat_mean'][0,:,7].T
 
-# remove overlapping constructs (CHECK TO MAKE SURE RIGHT VARIANTS EXCLUDED)
+# remove overlapping constructs
 not_overlapping = np.logical_not(data['b_train'][0,:,0])
 data_df = data_df[not_overlapping]
 
+# remove common positions
+if remove_common_positions:
+    
 budget = np.arange(20,len(data_df),20) # test budget
 
 s=1 # subplot index
@@ -165,4 +170,5 @@ for var_to_predict in all_vars_to_predict:
         plt.xlabel('test budget', fontsize=8)
     s+=1
 
-data_df.to_pickle(df_save_path)
+if save_on:
+    data_df.to_pickle(df_save_path)

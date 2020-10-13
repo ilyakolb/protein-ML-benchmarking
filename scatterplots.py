@@ -72,7 +72,7 @@ for FPnum in FPnums:
     
     plt.tight_layout()
     
-    # box plots of rank differences (ML vs naive)
+    # box plots of rank differences (ML vs naive) of top hits
     fig = plt.figure()
     fig.suptitle(x_to_plot_gt + " and " + y_to_plot_gt)
     top_percents = [10, 20, 50, 100] # percent above which to do cutoff
