@@ -138,9 +138,7 @@ data_df['naive_Decay 160FP'] = data_naive['yhat_mean'][0,:,7].T
 not_overlapping = np.logical_not(data['b_train'][0,:,0])
 data_df = data_df[not_overlapping]
 
-# remove common positions
-if remove_common_positions:
-    
+
 budget = np.arange(20,len(data_df),20) # test budget
 
 s=1 # subplot index

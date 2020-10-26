@@ -16,7 +16,7 @@ model = 'convunirep' # convunirep or convprobaaseq
 predict_type = 'mean+std'
 df_save_path = r'D:\pythonTesting\ML-validation-data\data_df_predict=' +predict_type+ '_model=' + model + '.pkl'
 
-data_df = pd.read_pickle(df_save_path)
+data_df = pd.read_pickle(df_save_path) # GC6 test set
 data_df.set_index('variant')
 
 # load annotated data (used to get position list)
@@ -39,12 +39,24 @@ for p in annotated_data_GC6['position']:
     all_positions_in_GC6.extend(p)
 all_positions_in_GC6 = np.unique(all_positions_in_GC6)
 
-unique_pos = np.setdiff1d(all_positions_in_GC6, all_positions_in_GC3)
-print('Positions in GC6 not in GC3:')
+# GC3 variants that contain none of the mutations in GC6
+GC6_GC3_subset = pd.merge(annotated_data_GC3, annotated_data_GC6, how='inner', on=['variant']) # training set: GC3 data in GC6 dataset (n=235)
+
+all_positions_in_GC6_GC3 = []
+
+for p in GC6_GC3_subset['position_x']:
+    all_positions_in_GC6_GC3.extend(p)
+all_positions_in_GC6_GC3 = np.unique(all_positions_in_GC6_GC3)
+
+unique_pos = np.setdiff1d(all_positions_in_GC6, GC6_GC3_subset['position_x'])
+print('Positions in GC6 not in GC6_GC3:')
 print(unique_pos)
 
 r = pd.merge(data_df, annotated_data_GC6['position'], on='variant')
-include_variant = [np.intersect1d(p, all_positions_in_GC3).size == 0 for p in r['position']]
+include_variant = [np.intersect1d(p, all_positions_in_GC6_GC3).size == 0 for p in r['position']]
 
-print('Num variants with no positions common to GC3 dataset: {}'.format(sum(include_variant)))
+print('Num variants with no positions common to GC6_GC3 dataset: {}'.format(sum(include_variant)))
+
+
+# include_variant = [np.intersect1d(p, unique_pos).size == len(p) for p in GC6_GC3_subset['position_x']]
 
