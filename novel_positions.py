@@ -52,11 +52,20 @@ unique_pos = np.setdiff1d(all_positions_in_GC6, GC6_GC3_subset['position_x'])
 print('Positions in GC6 not in GC6_GC3:')
 print(unique_pos)
 
-r = pd.merge(data_df, annotated_data_GC6['position'], on='variant')
+r = pd.merge(data_df, annotated_data_GC6['position'], on='variant') # test set
 include_variant = [np.intersect1d(p, all_positions_in_GC6_GC3).size == 0 for p in r['position']]
 
 print('Num variants with no positions common to GC6_GC3 dataset: {}'.format(sum(include_variant)))
 
 
-# include_variant = [np.intersect1d(p, unique_pos).size == len(p) for p in GC6_GC3_subset['position_x']]
+# positions 59,60,105 are unique to GC6 test set. Are there variants in GC6_GC3_subset with these positions?
+pos_unique_GC6_testset = np.array([59,60,105])
 
+intersection_GC6_GC3_and_uniqueGC6 = [np.intersect1d(p, pos_unique_GC6_testset).size > 0 for p in GC6_GC3_subset['position_x']]
+
+print('Num variants in GC6_GC3 dataset containing positions 59 or 60 or 105: {}'.format(sum(intersection_GC6_GC3_and_uniqueGC6)))
+
+# Are there variants in GC3 dataset with these positions?
+intersection_GC3_and_uniqueGC6 = [np.intersect1d(p, pos_unique_GC6_testset).size > 0 for p in annotated_data_GC3['position']]
+print('Num variants in GC3 dataset containing positions 59 or 60 or 105: {}'.format(sum(intersection_GC3_and_uniqueGC6)))
+print(annotated_data_GC3[intersection_GC3_and_uniqueGC6])
